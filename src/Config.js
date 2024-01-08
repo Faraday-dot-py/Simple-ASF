@@ -1,5 +1,7 @@
 
 // ONLY EDIT HERE
+import firebase from 'firebase/compat/app'
+import { getDatabase } from 'firebase/database'
 const sortMetrics = ["Match Number", "Team Number"]
 
 // DO NOT EDIT BELOW
@@ -15,4 +17,9 @@ const firebaseConfig = {
     measurementId:  process.env.REACT_APP_MEASUREMENT_ID
 };
 
-export {firebaseConfig, sortMetrics };
+if(firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db = getDatabase();
+export {db, firebaseConfig, sortMetrics };
