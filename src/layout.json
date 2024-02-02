@@ -12,7 +12,7 @@
   {
     "title": "Name",
     "type": "textbox",
-    "value": "",
+    "value": "test",
     "required": true,
     "resetToValue": "",
     "decorator": "name_input"
@@ -21,18 +21,20 @@
   {
     "title": "Team Number",
     "type": "textbox",
-    "value": "",
+    "value": "test",
     "required": true,
     "resetToValue": "",
-    "decorator": "team_number_input"
+    "decorator": "team_number_input",
+    "category": "metadata"
   },
   {
     "title": "Match Number",
     "type": "textbox",
-    "value": "",
+    "value": "test",
     "required": true,
     "resetToValue": "",
-    "decorator": "match_number_input"
+    "decorator": "match_number_input",
+    "category": "metadata"
   },
   {
     "title": "Alliance Color",
@@ -43,7 +45,8 @@
       "Blue"
     ],
     "resetToValue": 0,
-    "decorator": "alliance_color_input"
+    "decorator": "alliance_color_input",
+    "category": "metadata"
   },
   {
     "type": "label",
@@ -54,19 +57,22 @@
     "title": "Crossed Auto Line",
     "type": "checkbox",
     "value": false,
-    "decorator": "crossed_auto_line_input"
+    "decorator": "crossed_auto_line_input",
+    "category": "abilities"
   },
   {
     "title": "Docked Auto",
     "type": "checkbox",
     "value": false,
-    "decorator": "docked_auto_input"
+    "decorator": "docked_auto_input",
+    "category": "abilities"
   },
   {
     "title": "Engaged Auto",
     "type": "checkbox",
     "value": false,
-    "decorator": "engaged_auto_input"
+    "decorator": "engaged_auto_input",
+    "category": "abilities"
   },
   {
     "title": "Cone Upper Auto",
@@ -76,7 +82,8 @@
     "resetToValue": 0,
     "maxValue": 10,
     "minValue": 0,
-    "decorator": "cone_upper_auto_input"
+    "decorator": "cone_upper_auto_input",
+    "category": "counters"
   },
   {
     "title": "Cone Middle Auto",
@@ -86,7 +93,8 @@
     "resetToValue": 0,
     "maxValue": 10,
     "minValue": 0,
-    "decorator": "cone_middle_auto_input"
+    "decorator": "cone_middle_auto_input",
+    "category": "counters"
   },
   {
     "title": "Cone Lower Auto",
@@ -96,7 +104,8 @@
     "resetToValue": 0,
     "maxValue": 10,
     "minValue": 0,
-    "decorator": "cone_lower_auto_input"
+    "decorator": "cone_lower_auto_input",
+    "category": "counters"
   },
   {
     "title": "Cube Upper Auto",
@@ -106,7 +115,8 @@
     "resetToValue": 0,
     "maxValue": 10,
     "minValue": 0,
-    "decorator": "cube_upper_auto_input"
+    "decorator": "cube_upper_auto_input",
+    "category": "counters"
   },
   {
     "title": "Cube Middle Auto",
@@ -116,7 +126,8 @@
     "resetToValue": 0,
     "maxValue": 10,
     "minValue": 0,
-    "decorator": "cube_middle_auto_input"
+    "decorator": "cube_middle_auto_input",
+    "category": "counters"
   },
   {
     "title": "Cube Lower Auto",
@@ -126,7 +137,8 @@
     "resetToValue": 0,
     "maxValue": 10,
     "minValue": 0,
-    "decorator": "cube_lower_auto_input"
+    "decorator": "cube_lower_auto_input",
+    "category": "counters"
   },
   {
     "type": "label",
@@ -141,7 +153,8 @@
     "resetToValue": 0,
     "maxValue": 20,
     "minValue": 0,
-    "decorator": "cone_upper_teleop_input"
+    "decorator": "cone_upper_teleop_input",
+    "category": "counters"
   },
   {
     "title": "Cone Middle Teleop",
@@ -151,7 +164,8 @@
     "resetToValue": 0,
     "maxValue": 20,
     "minValue": 0,
-    "decorator": "cone_middle_teleop_input"
+    "decorator": "cone_middle_teleop_input",
+    "category": "counters"
   },
   {
     "title": "Cone Lower Teleop",
@@ -161,7 +175,8 @@
     "resetToValue": 0,
     "maxValue": 20,
     "minValue": 0,
-    "decorator": "cone_lower_teleop_input"
+    "decorator": "cone_lower_teleop_input",
+    "category": "counters"
   },
   {
     "title": "Cube Upper Teleop",
@@ -171,7 +186,8 @@
     "resetToValue": 0,
     "maxValue": 20,
     "minValue": 0,
-    "decorator": "cube_upper_teleop_input"
+    "decorator": "cube_upper_teleop_input",
+    "category": "counters"
   },
   {
     "title": "Cube Middle Teleop",
@@ -181,7 +197,8 @@
     "resetToValue": 0,
     "maxValue": 20,
     "minValue": 0,
-    "decorator": "cube_middle_teleop_input"
+    "decorator": "cube_middle_teleop_input",
+    "category": "counters"
   },
   {
     "title": "Cube Lower Teleop",
@@ -191,7 +208,8 @@
     "resetToValue": 0,
     "maxValue": 20,
     "minValue": 0,
-    "decorator": "cube_lower_teleop_input"
+    "decorator": "cube_lower_teleop_input",
+    "category": "counters"
   },
   {
     "title": "Fumbles",
@@ -201,7 +219,8 @@
     "resetToValue": 0,
     "maxValue": 20,
     "minValue": 0,
-    "decorator": "fumbles_input"
+    "decorator": "fumbles_input",
+    "category": "counters"
   },
   {
     "title": "Supercharged Pieces",
@@ -211,7 +230,8 @@
     "resetToValue": 0,
     "maxValue": 20,
     "minValue": 0,
-    "decorator": "supercharged_pieces_input"
+    "decorator": "supercharged_pieces_input",
+    "category": "counters"
   },
   {
     "type": "label",
@@ -222,51 +242,60 @@
     "title": "Docked Teleop",
     "type": "checkbox",
     "value": false,
-    "decorator": "docked"
+    "decorator": "docked",
+    "category": "abilities"
   },
   {
     "title": "Engaged Teleop",
     "type": "checkbox",
     "value": false,
-    "decorator": "engaged"
+    "decorator": "engaged",
+    "category": "abilities"
   },
   {
     "title": "Chargepad Failure",
     "type": "checkbox",
     "value": false,
-    "decorator": "chargepad_failure"
+    "decorator": "chargepad_failure",
+    "category": "data"
   },
   {
-    "type": "label",
-    "value": "Temporary Failure",
-    "decorator": "label"
+    "title": "Temporary Failure",
+    "type": "checkbox",
+    "value": false,
+    "decorator": "temporary_failure",
+    "category": "data"
   },
   {
     "title": "Critical Failure",
     "type": "checkbox",
     "value": false,
-    "decorator": "critical_failure"
+    "decorator": "critical_failure",
+    "category": "data"
   },
   {
     "title": "What they did well",
     "type": "textboxlong",
     "value": "",
     "resetToValue": "",
-    "decorator": "what_they_did_well_input"
+    "decorator": "what_they_did_well_input",
+    "category": "data"
   },
   {
     "title": "What they need to improve",
     "type": "textboxlong",
     "value": "",
     "resetToValue": "",
-    "decorator": "what_they_need_to_improve_input"
+    "decorator": "what_they_need_to_improve_input",
+    "category": "data"
   },
   {
     "title": "Additional Notes",
     "type": "textboxlong",
     "value": "",
     "resetToValue": "",
-    "decorator": "additional_notes_input"
+    "decorator": "additional_notes_input",
+    "category": "data"
   },
   {
     "title": "Submit",

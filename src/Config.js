@@ -1,6 +1,4 @@
 
-// DO NOT EDIT BELOW
-//---------------------------------------
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -13,10 +11,13 @@ const firebaseConfig = {
   measurementId:  process.env.REACT_APP_MEASUREMENT_ID
 };
 
+// DO NOT EDIT ABOVE THIS LINE
+//---------------------------------------
+
 // ONLY EDIT HERE
 const config = {
-    firebaseConfig: firebaseConfig,
-    sortMetrics: ["Match Number", "Team Number"],
+    firebaseConfig: firebaseConfig, // Don't change this line
+    sortMetrics: ["Match Number", "Team Number"], // Not needed if you are using TBA
     renderRequiredStars: true,
     useTPS: true,
     exportDataAs: "json" // Either "json" or "csv"
