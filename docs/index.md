@@ -71,7 +71,7 @@ Included in this repository is the layout for a basic scouting app for the 2023 
 
 This one is pretty simple. <br/>
 In your terminal, run ``npm start`` in the root directory of the project.<br/>
-A new tab should open in your browser with the example app. You won't be using this, so you can delete it :)
+A new tab should open in your browser with the example app. You won't be using this, (unless you want to see what the example app looks like) so you can delete everything in `layout.json`
 
 ### All the widgets you need 
 
@@ -82,7 +82,10 @@ all of which are located in the ``src/widgets`` directory. <br />
 All widgets need a certain set of parameters, or props, to work. <br />
 Most are different depending on what widget you are rendering, but all widgets need a ``type`` prop to tell the compiler what you want to render. <br/>
 All widgets also need a ``title`` prop, which is the title of the widget. <br />
-Finally, any input can have a ``value`` prop, which is the initial value of the input when the page first loads **(DIFFERENT THAN THE ``resetToValue``)**. <br />
+The `useTPS` parameter is a boolean that controls whether the app uses TPS (The Purple Standard) or not. More information on TPS is below in the `Additional Parameters` section.<br />
+Finally, any *input* (and only an input) can have a ``value`` prop, which is the initial value of the input when the page first loads **(DIFFERENT THAN THE ``resetToValue``)**. <br />
+
+
 ### 1. Header
 
 - **Widget Type**: `header`
