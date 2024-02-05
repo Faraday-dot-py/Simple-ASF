@@ -9,7 +9,7 @@
 ## Firebase Setup:
 [Follow these instructions set up your Firebase realtime database](https://firebase.google.com/docs/web/setup)*
 
-***IMPORTANT: Only do steps 1-2 and make sure to read the notes below!!!**
+**IMPORTANT: Only do steps 1-2 and make sure to read the notes below!!!**
 
 !!!Notes
     - Make sure that you keep Google Analytics enabled when prompted
@@ -164,24 +164,33 @@ An example form for the 2023 season is included in the repository when it is fir
 ## Additional Configuration 
 
 In addition to the ``/src/layout.json`` file, there are two other files that you will need to edit to get your app working. <br />
-The first is the ``/src/config.json`` file. This file contains the configuration for the app, such as the title and the Firebase database URL. <br />
+The first is the ``/src/config.json`` file. This file contains the configuration for the app, such as the title and the Firebase database URL. **When editing this file, only edit the values of the variables specified below.**<br />
 The second is the ``/src/.env`` file. This file contains the configuration for the Firebase database, which you should have already set up. <br />
 
 
-### `sortMetrics` Parameter
+### `sortMetrics`
 
 The `sortMetrics` parameter is an array of strings that determines how the database is sorted within the application. Each string in the array corresponds to the title of a valid input field, and the database will be sorted based on the specified metrics. In the provided example, `sortMetrics` is defined as `["Match Number", "Name"]`, indicating that the database should be sorted first by "Match Number" and then by "Name".
 
-### `renderRequiredStars` Parameter
+### `renderRequiredStars`
 
 The `renderRequiredStars` parameter is a boolean that controls whether asterisks are appended to the end of any field that is marked as required. When set to `true`, the application will visually indicate required fields by adding an asterisk to their labels. In the example configuration, `renderRequiredStars` is set to `true`, enabling this feature.
 
+### `useTPS`
+TPS, or The Purple Standard, is a community-driven standard for scouting data developed by Harker Robotics (FRC Team 1072) and The Purple Warehouse. It is a set of guidelines for how to collect and store data, and it is used by many teams in the FIRST Robotics Competition. <br /> 
+More information can be found in [TPS Press Release](https://thepurplewarehouse.com/tps-press-release.pdf), on [The Purple Warehouse Website](https://www.thepurplewarehouse.com/), and on their [Chief Delphi thread](https://www.chiefdelphi.com/t/the-purple-standard-a-unified-and-community-driven-standard-for-frc-scouting-data/449394). TPS can be enabled by setting the `useTPS` parameter to `true` in the `config.json` file. <br /> 
+
+!!!Notes
+  When `useTPS` is enabled, the app will automatically sort the data in the database according to [TPS guidelines](https://thepurplewarehouse.com/tps-press-release.pdf#page=5). Otherwise, the app will sort the data according to the `sortMetrics` parameter. <br />
+
+### `exportDataAs`
+The `exportDataAs` parameter is a string that determines the format in which the data is exported. The only valid values for this parameter are "csv" and "json". When set to "csv", the data will be exported as a CSV file. When set to "json", the data will be exported as a JSON file. In the example configuration, `exportDataAs` is set to "json", indicating that the data should be exported as a JSON file.
+
 ### Usage in Configuration Files
 
-When editing the ``/src/config.json`` file, stay above the line, you only need to edit the ``sortMetrics`` and ``renderRequiredStars`` parameters. <br /><br />
+When editing the ``/src/config.json`` file, stay below the line, you only need to edit the parameters listed above. <br /><br />
 You can also change the title of the app by going to the ``package.json`` file and changing the ``name`` parameter. <br /><br />
-The final thing that you may want to edit is the ``/src/App.css`` file. This file contains the CSS for the app, and you can edit it to change the look of your app. <br />
-There is already premade CSS, so I wouldn't mess with it unless you know what you are doing. <br />
+The final thing that you may want to edit is the ``/src/App.css`` file. This file contains the CSS for the app, and you can edit it to change the look of your app. There is already premade CSS, so I wouldn't mess with it unless you know what you are doing. <br />
 
 ## Deploying your app 
 Once you have finished editing your app, you can deploy it to the web. <br />
