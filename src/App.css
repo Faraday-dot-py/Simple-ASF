@@ -93,6 +93,7 @@ h3 {
     width: 100% !important;
     background: linear-gradient(to right, var(--accent-color), var(--primary-color), var(--accent-color));
     
+    
 }
 
 .textbox {
@@ -120,7 +121,7 @@ h3 {
 
 .checkbox-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: left;
     align-items: center;
 
@@ -129,8 +130,8 @@ h3 {
 .checkbox {
     width: 1.2rem;
     height: 1.2rem;
-    margin-right: 1rem;
-    margin-left: 15%;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
     background-color: white;
     border-radius: 10%;
     vertical-align: left;
@@ -140,6 +141,7 @@ h3 {
     -webkit-appearance: none;
     outline: none;
     cursor: pointer;
+    position: relative;
 }
 
 .checkbox:checked {
