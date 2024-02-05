@@ -34,7 +34,7 @@ body {
     justify-content: center;
     align-items: center;
     color: #F4EADF;
-    max-width: 50%;
+    max-width: 60%;
     margin: auto;
 }
 
@@ -79,14 +79,21 @@ h1 {
     font-size: 3rem;
     color: var(--primary-color);
     border: none !important;
-    width: 100% !important;
+    width: fit-content !important;
+    background: linear-gradient(to right, var(--accent-color), var(--secondary-color), var(--accent-color));
+    
 }
 
 h3 {
     font: 'VazirMatn', sans-serif;
-    font-size: 1.999rem;
+    font-size: 2.5rem;
     font-weight: bold;
     border: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+    background: linear-gradient(to right, var(--accent-color), var(--primary-color), var(--accent-color));
+    
+    
 }
 
 .textbox {
@@ -112,20 +119,30 @@ h3 {
     font-weight: normal;
 }
 
+.checkbox-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: center;
+
+}
+
 .checkbox {
-    width: 2.1rem;
-    height: 2.1rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
     background-color: white;
-    border-radius: 50%;
-    vertical-align: middle;
-    border: 1px solid #ddd;
+    border-radius: 10%;
+    vertical-align: left;
+    flex-direction: row;
+    border: 3px solid #ddd;
     appearance: none;
     -webkit-appearance: none;
     outline: none;
     cursor: pointer;
+    position: relative;
 }
-
-
 
 .checkbox:checked {
     background-color: var(--primary-color);
@@ -134,6 +151,13 @@ h3 {
 .checkbox:active {
     transform: translateY(2px);
     background-color: var(--accent-color)
+}
+
+.checkbox:hover {
+    transition-property: background-color, color;
+    transition-duration: 0.25s;
+    background-color: var(--background-color);
+    color: var(--secondary-color);
 }
 
 .dropdown {

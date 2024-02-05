@@ -309,6 +309,22 @@ class Container extends React.Component{
     URL.revokeObjectURL(blobURL);
   }
 
+  exportDataAsJSON =() => {
+    let cachedDataJSON = (JSON.parse(localStorage.getItem("matchData")))
+    
+    let file = new Blob([JSON.stringify(cachedDataJSON)], {type: "text/json"})
+    let blobURL = window.URL.createObjectURL(file)
+
+    const anchor = document.createElement('a');
+    anchor.href = blobURL
+    anchor.target = "_blank"
+    anchor.download = "matchData.json"
+
+    anchor.click()
+
+    URL.revokeObjectURL(blobURL);
+  }
+
   getInteractable = (id) => {
     return this.state.interactables.filter((item) => (item.id === id))[0]
   }

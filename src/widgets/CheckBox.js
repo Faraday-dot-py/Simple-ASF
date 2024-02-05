@@ -11,10 +11,10 @@ class CheckBox extends React.Component{
     render(){
         return (
             <div className={"widget checkbox-container " + (this.decorator ? this.decorator : "")}>
-                <div className="subtitle">
+                <span className="subtitle">
                     {this.title}
-                </div>
-            
+                </span>
+                
                 <input
                     id={this.id}
                     type="checkbox"
@@ -22,6 +22,8 @@ class CheckBox extends React.Component{
                     value={this.value}
                     onChange={() => this.props.changeHandler(this.id)}
                 />
+                
+            
                 
             </div>
         )
