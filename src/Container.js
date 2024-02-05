@@ -1,13 +1,10 @@
 
 /**
  *  --- TODO ---
- * Firebase backend -- COMPLETE
- * Scouting Visualization With Simple ASF???
- * Required Fields -- COMPLETE
- * Optional upper and lower bounds for counters -- COMPLETE
- * Save data to local storage -- COMPLETE
- * Write an actual function to clear the form -- COMPLETE
- * Rewrite the whole damn thing :heart: -- COMPLETE
+ * Create optional "useMetadata" prop for Config.js -- COMPLETE
+ * Rework firebase to use the new data format -- COMPLETE (By default)
+ * Edit documentation 
+ * Config to allow switching between CSV and JSON -- COMPLETE
 */
 
 import './App.css';
@@ -19,7 +16,7 @@ import Counter from './widgets/Counter'
 import Dropdown from './widgets/Dropdown';
 
 import layout from './layout.json'
-import {firebaseConfig, sortMetrics, renderRequiredStars} from './Config.js'
+import config from './Config.js'
 
 import logo from './images/patribotsLogo.png';
 
@@ -30,7 +27,7 @@ import { getDatabase, ref, update } from "firebase/database";
 import { initializeApp } from "firebase/app";
 
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(config.firebaseConfig);
 
 const isInteractable = (type) => {
   switch (type) {
@@ -165,43 +162,82 @@ class Container extends React.Component{
     const db = getDatabase();
     
     let json = {};
-    data.forEach((item) => {
-      json[item[0]] = ((item[1] === undefined) ? "" : item[1])
-    })
+    console.log("data: ", data)
+    
+    if (config.useTPS === false) {
+      data.forEach((item) => {
+        json[item[0]] = ((item[1] === undefined) ? "" : item[1])
+      })
 
-    let path = ""
-    sortMetrics.forEach((item) => {
-      if (json[item] === undefined) {throw "Sort metric [" + item + "] not found in data"}
-      path += json[item] + "/"
-      delete json[item]
-    })
-    path = path.slice(0, -1)
-    console.log(path, json)
+      let path = ""
+      config.sortMetrics.forEach((item) => {
+        if (json[item] === undefined) {throw "Sort metric [" + item + "] not found in data"}
+        path += json[item] + "/"
+        delete json[item]
+      })
+      path = path.slice(0, -1)
 
-    update(ref(db, path), json)
+      update(ref(db, path), json)
 
-    return true
+      return true
+    }
+    else {
+      let path = "entries/" + Date.now() + "/"
+      
+      console.log(">>", data)
+      update(ref(db, path), data)
+      
+      return true
+
+    }
     
   };
 
   handleFormSubmit = (e) =>{
+    console.log("submitting form")
     e.preventDefault()
-
+    // 0 is the data's title, 1 is the data's value, 2 is the data's category (which may or may not exist)
     let missingRequiredFields = []
     let data = this.state.interactables.map((item) => {
-      if (item.required && (item.value === "" || item.value === 0 || item.value === undefined)) {
+      // If the item is required and is empty, or if the item is metadata and useTPS is true and the item is empty, add it to the list of missing required fields
+      if ((item.required || (config.useTPS && item.category === "metadata"))  && (item.value === "" || item.value === 0 || item.value === undefined)) {
         missingRequiredFields.push(item.title)
       }
-      return [item.title, item.value]
+      
+      // Return the item's title, value, and it's category if useTPS is true. If a category is not specified, default to "data"
+      return [item.title, item.value, (config.useTPS ? (item.category !== undefined ? item.category : "data") : undefined)]
     })
 
+    // Make sure that you don't have any missing required fields
     if (missingRequiredFields.length > 0) {
       alert("You are missing the following " + missingRequiredFields.length + " required fields: " + missingRequiredFields.join(", ")); 
       console.log("not submitted, missing required field(s) [" + missingRequiredFields.join(",") + "]")
       return
     }
 
-    let oldLocalStorage = JSON.parse(localStorage.getItem("matchData"))
+    // Reformat data for TPS
+    if (config.useTPS) {
+      var formattedData = {}
+      data.forEach((item) => {
+        if (item[2] === undefined) {
+          item[2] = "data"
+          console.warn("No category specified for item [" + item[0] + "], defaulting to 'data'")
+        }
+        
+        if (formattedData[[item[2]]] === undefined) {
+          formattedData[[item[2]]] = {}
+        }
+        formattedData[[item[2]]][item[0]] = item[1]
+      }
+      )
+      data = formattedData
+    } else {
+      data = data.map((item) => {return [item[0], item[1]]})
+    }
+    
+
+    let oldLocalStorage = localStorage.getItem("matchData")
+    oldLocalStorage = JSON.parse(oldLocalStorage === "" ? "[]" : oldLocalStorage)
     localStorage.setItem("matchData", JSON.stringify([...((oldLocalStorage === null) ? [] : oldLocalStorage), data]))
 
     try {
@@ -223,7 +259,11 @@ class Container extends React.Component{
     
   }
 
-  exportDataToCSV =() => {
+
+  /**
+   * @deprecated This method is deprecated. Use exportDataAsJSON instead.
+   */
+  exportDataAsCSV =() => {
     let cachedDataJSON = (JSON.parse(localStorage.getItem("matchData")))
     let cachedDataCSV = ""
     for (let element in this.state.interactables) {
@@ -247,9 +287,25 @@ class Container extends React.Component{
     anchor.href = blobURL
     anchor.target = "_blank"
     anchor.download = "matchData.csv"
- 
+
     anchor.click()
- 
+
+    URL.revokeObjectURL(blobURL);
+  }
+
+  exportDataAsJSON =() => {
+    let cachedDataJSON = (JSON.parse(localStorage.getItem("matchData")))
+    
+    let file = new Blob([JSON.stringify(cachedDataJSON)], {type: "text/json"})
+    let blobURL = window.URL.createObjectURL(file)
+
+    const anchor = document.createElement('a');
+    anchor.href = blobURL
+    anchor.target = "_blank"
+    anchor.download = "matchData.json"
+
+    anchor.click()
+
     URL.revokeObjectURL(blobURL);
   }
 
@@ -261,26 +317,18 @@ class Container extends React.Component{
     this.setState({
       d: (this.state.d === undefined ? 1 : this.state.d) + 1
     })
-    if (this.state.d > 4738) {
+    if (this.state.d > 1) {
       alert("You have clicked the logo " + this.state.d + " times. You have no life.")
-      console.log(
-`%cThis scouting application was made by Adam Webb, an alumni of FRC Team 4738, the Patribots. 
-This application is open source and can be found at https://github.com/Faraday-dot-py/Simple-ASF
-I hope you enjoy using this application as much as I enjoyed making it, and good luck to you in your competition!
-
-PS. If you're reading this, you either really have no life or you are a developer (same thing either way). 
-If you are a developer, please consider contributing to this project. I would love to see this project grow and become a useful tool for scouting teams around the world. 
-If you are a user, please consider sharing this application with other teams. 
-Also, feel free to make a pull request if you have any ideas for improvements or new features. Thanks!`, "font-weight: bold")
+      console.log(atob("JWNUaGlzIHNjb3V0aW5nIGFwcGxpY2F0aW9uIHdhcyBtYWRlIGJ5IEFkYW0gV2ViYiwgYW4gYWx1bW5pIG9mIEZSQyBUZWFtIDQ3MzgsIHRoZSBQYXRyaWJvdHMuIApUaGlzIGFwcGxpY2F0aW9uIGlzIG9wZW4gc291cmNlIGFuZCBjYW4gYmUgZm91bmQgYXQgaHR0cHM6Ly9naXRodWIuY29tL0ZhcmFkYXktZG90LXB5L1NpbXBsZS1BU0YKSSBob3BlIHlvdSBlbmpveSB1c2luZyB0aGlzIGFwcGxpY2F0aW9uIGFzIG11Y2ggYXMgSSBlbmpveWVkIG1ha2luZyBpdCwgYW5kIGdvb2QgbHVjayB0byB5b3UgaW4geW91ciBjb21wZXRpdGlvbiEKClBTLiBJZiB5b3UncmUgcmVhZGluZyB0aGlzLCB5b3UgZWl0aGVyIHJlYWxseSBoYXZlIG5vIGxpZmUgb3IgeW91IGFyZSBhIGRldmVsb3BlciAoc2FtZSB0aGluZyBlaXRoZXIgd2F5KS4gCklmIHlvdSBhcmUgYSBkZXZlbG9wZXIsIHBsZWFzZSBjb25zaWRlciBjb250cmlidXRpbmcgdG8gdGhpcyBwcm9qZWN0LiBJIHdvdWxkIGxvdmUgdG8gc2VlIHRoaXMgcHJvamVjdCBncm93IGFuZCBiZWNvbWUgYSB1c2VmdWwgdG9vbCBmb3Igc2NvdXRpbmcgdGVhbXMgYXJvdW5kIHRoZSB3b3JsZC4gCklmIHlvdSBhcmUgYSB1c2VyLCBwbGVhc2UgY29uc2lkZXIgc2hhcmluZyB0aGlzIGFwcGxpY2F0aW9uIHdpdGggb3RoZXIgdGVhbXMuIApBbHNvLCBmZWVsIGZyZWUgdG8gbWFrZSBhIHB1bGwgcmVxdWVzdCBpZiB5b3UgaGF2ZSBhbnkgaWRlYXMgZm9yIGltcHJvdmVtZW50cyBvciBuZXcgZmVhdHVyZXMuIFRoYW5rcyE="), "font-weight: bold")
     }
   }
 
   render () {
     return (
       <div className="app">
-        <image src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR71FESRUZEUb2_52JI8EZhNkaQ3fn0p1vFU8UANUePHUI2qQbzsFqS12lnWCv1Fj6S87k&usqp=CAU"}></image>
+        <image src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR71FESRUZEUb2_52JI8EZhNkaQ3fn0p1vFU8UANUePHUI2qQbzsFqS12lnWCv1Fj6S87k&usqp=CAU"}/>
         <ul className="outer-container">
-          {Object.keys(layout).map((item) => {   
+          {Object.keys(layout).map((item) => {
             if (isInteractable(layout[item].type)) {
             }
             switch (layout[item].type) {
@@ -289,25 +337,25 @@ Also, feel free to make a pull request if you have any ideas for improvements or
               case "label":
                 return <h3          id={layout[item].id} className={"widget label " + layout[item].decorator}>{layout[item].value}</h3>
               case "checkbox":
-                return <CheckBox    id={layout[item].id} title={layout[item].title + (renderRequiredStars ? (layout[item].required ? " *" : "") : "")} decorator={layout[item].decorator} value={layout[item].value} resetToValue={layout[item].resetToValue} changeHandler={this.handleCheckBoxChange}/>
+                return <CheckBox    id={layout[item].id} title={layout[item].title + (config.renderRequiredStars ? (layout[item].required ? " *" : "") : "")} decorator={layout[item].decorator} value={layout[item].value} resetToValue={layout[item].resetToValue} changeHandler={this.handleCheckBoxChange}/>
               case "textbox":
-                return <TextBox     id={layout[item].id} title={layout[item].title + (renderRequiredStars ? (layout[item].required ? " *" : "") : "")} decorator={layout[item].decorator} value={this.getInteractable(layout[item].id).value} resetToValue={layout[item].resetToValue} changeHandler={this.handleTextBoxChange}/>
+                return <TextBox     id={layout[item].id} title={layout[item].title + (config.renderRequiredStars ? (layout[item].required ? " *" : "") : "")} decorator={layout[item].decorator} value={this.getInteractable(layout[item].id).value} resetToValue={layout[item].resetToValue} changeHandler={this.handleTextBoxChange}/>
               case "textboxlong":
-                return <TextBoxLong id={layout[item].id} title={layout[item].title + (renderRequiredStars ? (layout[item].required ? " *" : "") : "")} decorator={layout[item].decorator} value={layout[item].value} resetToValue={layout[item].resetToValue} changeHandler={this.handleTextBoxChange}/>
+                return <TextBoxLong id={layout[item].id} title={layout[item].title + (config.renderRequiredStars ? (layout[item].required ? " *" : "") : "")} decorator={layout[item].decorator} value={layout[item].value} resetToValue={layout[item].resetToValue} changeHandler={this.handleTextBoxChange}/>
               case "counter":
-                return <Counter     id={layout[item].id} title={layout[item].title + (renderRequiredStars ? (layout[item].required ? " *" : "") : "")} decorator={layout[item].decorator} value={layout[item].value} resetToValue={layout[item].resetToValue} changeHandler={this.handleCounterChange} increment={layout[item].increment} maxValue={layout[item].maxValue} minValue={layout[item].minValue}/>
+                return <Counter     id={layout[item].id} title={layout[item].title + (config.renderRequiredStars ? (layout[item].required ? " *" : "") : "")} decorator={layout[item].decorator} value={layout[item].value} resetToValue={layout[item].resetToValue} changeHandler={this.handleCounterChange} increment={layout[item].increment} maxValue={layout[item].maxValue} minValue={layout[item].minValue}/>
               case "dropdown":
-                return <Dropdown    id={layout[item].id} title={layout[item].title + (renderRequiredStars ? (layout[item].required ? " *" : "") : "")} decorator={layout[item].decorator} value={layout[item].value} resetToValue={layout[item].resetToValue} changeHandler={this.handleDropdownChange} options={layout[item].options}/>
+                return <Dropdown    id={layout[item].id} title={layout[item].title + (config.renderRequiredStars ? (layout[item].required ? " *" : "") : "")} decorator={layout[item].decorator} value={layout[item].value} resetToValue={layout[item].resetToValue} changeHandler={this.handleDropdownChange} options={layout[item].options}/>
               case "submit":
                 return <span className='widget submit-container'><button      id={layout[item.id]} className={"submit " + (this.decorator ? this.decorator : "")} onClick={this.handleFormSubmit}>{layout[item].title}</button></span>
               case "export":
-                return <button onClick={this.exportDataToCSV}>{layout[item].title}</button>
+                return <button onClick={this.exportDataAsJSON}>{layout[item].title}</button>
               default:
                 return <div>error: undefined widget type [{layout[item.type]}]</div>
             }
           })}
           
-          <img src={logo} alt="" style={{height:0,width:0}} onClick={this.c}/>
+          <img src={logo} alt="" id="image" style={{height:0,width:0}} onClick={this.c}/>
         </ul>
       </div>
     );
